@@ -39,11 +39,22 @@ func NewResourceQuantileSampler(conf *config.AgentConfig) *ResourceQuantileSampl
 func (s *ResourceQuantileSampler) AddTrace(trace model.Trace) {
 	s.mu.Lock()
 
+	rootFound := false
+
 	for _, span := range trace {
 		s.traceBySpanID[span.SpanID] = &trace
-		s.stats.HandleSpan(span, DefaultAggregators)
+		if span.ParentID == 0 {
+			s.stats.HandleSpan(span, DefaultAggregators)
+			rootFound = true
+		}
 		s.spans++
 	}
+	if !rootFound {
+		for _, span := range trace {
+			s.stats.HandleSpan(span, DefaultAggregators)
+		}
+	}
+
 	s.traces++
 
 	s.mu.Unlock()
