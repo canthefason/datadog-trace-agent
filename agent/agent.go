@@ -83,6 +83,8 @@ func (a *Agent) Run() {
 				p.Traces = a.Sampler.Flush()
 			}()
 
+			wg.Wait()
+
 			a.Writer.inPayloads <- p
 		case <-a.exit:
 			break
