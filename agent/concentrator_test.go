@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testBucketInterval int64 = time.Duration(2 * time.Second).Nanoseconds()
+var testBucketInterval = time.Duration(2 * time.Second).Nanoseconds()
 
 func NewTestConcentrator() *Concentrator {
 	return NewConcentrator([]string{}, time.Second.Nanoseconds())

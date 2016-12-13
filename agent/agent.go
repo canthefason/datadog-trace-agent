@@ -95,6 +95,8 @@ func (a *Agent) Run() {
 	}
 }
 
+// Process is the default work unit that receives a trace, transforms it and
+// passes it downstream
 func (a *Agent) Process(t model.Trace) {
 	if len(t) == 0 {
 		// TODO: empty trace ++ / debug log

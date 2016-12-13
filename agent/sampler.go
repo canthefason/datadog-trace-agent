@@ -43,7 +43,7 @@ func (s *Sampler) Run() {
 	go s.samplerEngine.Run()
 }
 
-// AddTrace samples a trace then keep it until the next flush
+// Add samples a trace then keep it until the next flush
 func (s *Sampler) Add(t processedTrace) {
 	if s.samplerEngine.Sample(t.Trace, t.Root, t.Env) {
 		s.mu.Lock()
@@ -52,6 +52,7 @@ func (s *Sampler) Add(t processedTrace) {
 	}
 }
 
+// Stop stops the sampler
 func (s *Sampler) Stop() {
 	s.samplerEngine.Stop()
 }

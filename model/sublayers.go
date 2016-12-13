@@ -2,12 +2,15 @@ package model
 
 import "bytes"
 
+// SublayerValue is just a span-metric placeholder for a given
+// sublayer val
 type SublayerValue struct {
 	Metric string
 	Tag    Tag
 	Value  float64
 }
 
+// ComputeSublayers extracts sublayer values by type & service for a trace
 func ComputeSublayers(t *Trace) []SublayerValue {
 	iter := NewTraceLevelIterator(*t)
 	root, err := iter.NextSpan()
@@ -34,6 +37,7 @@ func ComputeSublayers(t *Trace) []SublayerValue {
 	return s
 }
 
+// PinSublayersOnSpan takes some sublayers and pins them on the given span.Metrics
 func PinSublayersOnSpan(span *Span, sv []SublayerValue) {
 	var b bytes.Buffer
 

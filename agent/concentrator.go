@@ -33,6 +33,7 @@ func NewConcentrator(aggregators []string, bsize int64) *Concentrator {
 	return &c
 }
 
+// Add appends to the proper stats bucket this trace's statistics
 func (c *Concentrator) Add(t processedTrace) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
