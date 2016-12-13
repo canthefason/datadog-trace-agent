@@ -116,8 +116,11 @@ func (a *Agent) Process(t model.Trace) {
 	pt := processedTrace{
 		Trace:     t,
 		Root:      root,
-		Env:       t.GetEnv(),
+		Env:       a.conf.DefaultEnv,
 		Sublayers: sublayers,
+	}
+	if tenv := t.GetEnv(); tenv != "" {
+		pt.Env = tenv
 	}
 
 	// NOTE: right now we don't use the .Metrics map in the concentrator
