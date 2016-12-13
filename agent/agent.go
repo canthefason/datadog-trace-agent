@@ -87,13 +87,12 @@ func (a *Agent) Run() {
 
 			a.Writer.inPayloads <- p
 		case <-a.exit:
-			break
+			log.Info("exiting")
+			close(a.Receiver.exit)
+			close(a.Writer.exit)
+			return
 		}
 	}
-
-	log.Info("exiting")
-	close(a.Receiver.exit)
-	close(a.Writer.exit)
 }
 
 func (a *Agent) Process(t model.Trace) {
