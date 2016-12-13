@@ -60,6 +60,9 @@ func (a *Agent) Run() {
 	flushTicker := time.NewTicker(a.conf.BucketInterval)
 	defer flushTicker.Stop()
 
+	a.Receiver.Run()
+	go a.Writer.Run()
+
 	for {
 		select {
 		case t := <-a.Receiver.traces:
