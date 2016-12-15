@@ -249,13 +249,24 @@ Traces:
 		stotal += len(t)
 		sdropped += len(toRemove)
 
+
 		// empty traces or we remove everything
+		log.Infof("XXXXXXXXXXXX toRemove=%v t=%v, len: %d %d", toRemove, t, len(toRemove), len(t))
 		if len(toRemove) == len(t) {
 			tdropped++
 			continue Traces
 		}
 
-		for _, idx := range toRemove {
+		for i:=len(toRemove)-1; i >= 0; i-- {
+			idx := toRemove[i]
+			log.Infof("DEBUGGGG %v, idx=%d, len=%d", t, idx, len(t))
+			if idx > len(t)-1 {
+				log.Infof("BLAH")
+				log.Infof("%v", toRemove)
+				log.Infof("%v", t)
+				log.Flush()
+				panic("NO")
+			}
 			t[idx] = t[len(t)-1]
 			t = t[:len(t)-1]
 		}
