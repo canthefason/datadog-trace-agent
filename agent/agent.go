@@ -99,7 +99,7 @@ func (a *Agent) Run() {
 // passes it downstream
 func (a *Agent) Process(t model.Trace) {
 	if len(t) == 0 {
-		// TODO: empty trace ++ / debug log
+		log.Debugf("skipping received empty trace")
 		return
 	}
 
@@ -108,7 +108,7 @@ func (a *Agent) Process(t model.Trace) {
 	model.SetSublayersOnSpan(root, sublayers)
 
 	if root.End() < model.Now()-a.conf.OldestSpanCutoff {
-		// TODO: late trace ++ / debug log
+		log.Debugf("skipping trace with root too far in past, root:%v", *root)
 		return
 	}
 
