@@ -105,7 +105,7 @@ func (a *Agent) Process(t model.Trace) {
 
 	sublayers := model.ComputeSublayers(&t)
 	root := t.GetRoot()
-	model.PinSublayersOnSpan(root, sublayers)
+	model.SetSublayersOnSpan(root, sublayers)
 
 	if root.End() < model.Now()-a.conf.OldestSpanCutoff {
 		// TODO: late trace ++ / debug log

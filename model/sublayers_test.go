@@ -48,7 +48,7 @@ func TestSublayerNested(t *testing.T) {
 
 	// pin on trace's root
 	root := tr.GetRoot()
-	PinSublayersOnSpan(root, sublayers)
+	SetSublayersOnSpan(root, sublayers)
 
 	expectedMetrics := map[string]float64{
 		"_sublayers.span_count":                                     5,

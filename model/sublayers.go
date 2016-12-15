@@ -37,8 +37,8 @@ func ComputeSublayers(t *Trace) []SublayerValue {
 	return s
 }
 
-// PinSublayersOnSpan takes some sublayers and pins them on the given span.Metrics
-func PinSublayersOnSpan(span *Span, sv []SublayerValue) {
+// SetSublayersOnSpan takes some sublayers and pins them on the given span.Metrics
+func SetSublayersOnSpan(span *Span, sv []SublayerValue) {
 	var b bytes.Buffer
 
 	if span.Metrics == nil {
