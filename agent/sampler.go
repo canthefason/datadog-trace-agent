@@ -1,8 +1,6 @@
 package main
 
 import (
-	"sync"
-
 	log "github.com/cihub/seelog"
 
 	"github.com/DataDog/raclette/config"
@@ -14,7 +12,6 @@ import (
 // Sampler chooses wich spans to write to the API
 type Sampler struct {
 	sampledTraces []model.Trace
-	mu            sync.Mutex
 
 	// statistics
 	traceCount int
@@ -45,10 +42,9 @@ func (s *Sampler) Run() {
 
 // Add samples a trace then keep it until the next flush
 func (s *Sampler) Add(t processedTrace) {
+	s.traceCount++
 	if s.samplerEngine.Sample(t.Trace, t.Root, t.Env) {
-		s.mu.Lock()
 		s.sampledTraces = append(s.sampledTraces, t.Trace)
-		s.mu.Unlock()
 	}
 }
 
@@ -59,12 +55,10 @@ func (s *Sampler) Stop() {
 
 // Flush returns representative spans based on GetSamples and reset its internal memory
 func (s *Sampler) Flush() []model.Trace {
-	s.mu.Lock()
 	traces := s.sampledTraces
 	s.sampledTraces = []model.Trace{}
 	traceCount := s.traceCount
 	s.traceCount = 0
-	s.mu.Unlock()
 
 	statsd.Client.Count("trace_agent.sampler.trace.kept", int64(len(traces)), nil, 1)
 	statsd.Client.Count("trace_agent.sampler.trace.total", int64(traceCount), nil, 1)
