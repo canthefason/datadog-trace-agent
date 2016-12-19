@@ -3,10 +3,10 @@ package main
 import (
 	log "github.com/cihub/seelog"
 
-	"github.com/DataDog/raclette/config"
-	"github.com/DataDog/raclette/model"
-	"github.com/DataDog/raclette/sampler"
-	"github.com/DataDog/raclette/statsd"
+	"github.com/DataDog/datadog-trace-agent/config"
+	"github.com/DataDog/datadog-trace-agent/model"
+	"github.com/DataDog/datadog-trace-agent/sampler"
+	"github.com/DataDog/datadog-trace-agent/statsd"
 )
 
 // Sampler chooses wich spans to write to the API

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/DataDog/raclette/quantile"
+	"github.com/DataDog/datadog-trace-agent/quantile"
 )
 
 // Hardcoded measures names for ease of reference
