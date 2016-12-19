@@ -6,6 +6,7 @@ import (
 )
 
 // the tokenizer.go implementation has been inspired by https://github.com/youtube/vitess sql parser
+// TODO: add the license to the NOTICE file
 
 // list of available tokens; this list has been reduced because we don't
 // need a full-fledged tokenizer to implement a Lexer
@@ -209,7 +210,7 @@ func (tkn *Tokenizer) scanVariableIdentifier(prefix rune) (int, []byte) {
 	if tkn.lastChar != '(' {
 		return LexError, buffer.Bytes()
 	}
-	for tkn.next(); tkn.lastChar != ')'; tkn.next() {
+	for tkn.next(); tkn.lastChar != ')' && tkn.lastChar != EOFChar; tkn.next() {
 		buffer.WriteByte(byte(tkn.lastChar))
 	}
 

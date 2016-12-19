@@ -50,6 +50,39 @@ func TestSQLResourceWithoutQuery(t *testing.T) {
 	assert.Equal("SELECT * FROM users WHERE id = ?", spanQ.Meta["sql.query"])
 }
 
+func TestSQLResourceWithError(t *testing.T) {
+	assert := assert.New(t)
+	testCases := []struct {
+		span model.Span
+	}{
+		{
+			model.Span{
+				Resource: "SELECT * FROM users WHERE id = '' AND '",
+				Type:     "sql",
+			},
+		},
+		{
+			model.Span{
+				Resource: "INSERT INTO pages (id, name) VALUES (%(id0)s, %(name0)s), (%(id1)s, %(name1",
+				Type:     "sql",
+			},
+		},
+		{
+			model.Span{
+				Resource: "INSERT INTO pages (id, name) VALUES (%(id0)s, %(name0)s), (%(id1)s, %(name1)",
+				Type:     "sql",
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		spanQ := Quantize(tc.span)
+		assert.Equal("Non-parsable SQL query", spanQ.Resource)
+		assert.Equal("", spanQ.Meta["sql.query"])
+		assert.Equal("Query not parsed", spanQ.Meta["agent.parse.error"])
+	}
+}
+
 func TestSQLQuantizer(t *testing.T) {
 	assert := assert.New(t)
 
@@ -183,6 +216,18 @@ func TestSQLQuantizer(t *testing.T) {
 		{
 			`INSERT INTO delayed_jobs (attempts, created_at, failed_at, handler, last_error, locked_at, locked_by, priority, queue, run_at, updated_at) VALUES (0, '2016-12-04 17:09:59', NULL, '--- !ruby/object:Delayed::PerformableMethod\nobject: !ruby/object:Item\n  store:\n  - a simple string\n  - an \'escaped \' string\n  - another \'escaped\' string\n  - 42\n  string: a string with many \\\\\'escapes\\\\\'\nmethod_name: :show_store\nargs: []\n', NULL, NULL, NULL, 0, NULL, '2016-12-04 17:09:59', '2016-12-04 17:09:59')`,
 			"INSERT INTO delayed_jobs ( attempts, created_at, failed_at, handler, last_error, locked_at, locked_by, priority, queue, run_at, updated_at ) VALUES ?",
+		},
+		{
+			"SELECT name, pretty_print(address) FROM people;",
+			"SELECT name, pretty_print ( address ) FROM people",
+		},
+		{
+			"* SELECT * FROM fake_data(1, 2, 3);",
+			"* SELECT * FROM fake_data ?",
+		},
+		{
+			"CREATE FUNCTION add(integer, integer) RETURNS integer\n AS 'select $1 + $2;'\n LANGUAGE SQL\n IMMUTABLE\n RETURNS NULL ON NULL INPUT;",
+			"CREATE FUNCTION add ( integer, integer ) RETURNS integer AS ? LANGUAGE SQL IMMUTABLE RETURNS ? ON ? INPUT",
 		},
 	}
 
